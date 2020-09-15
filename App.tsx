@@ -29,7 +29,7 @@ const Main = ({ navigation  }) => {
 			case 'home':
 				return <HomeScreen navigation={navigation}/>;
 			case 'explorer':
-				return <ExplorerScreen navigation={navigation}/>;
+				return <ExplorerScreen navigation={navigation}/>
 			case 'configuration':
 				return <ConfigScreen navigation={navigation}/>;
 		}
@@ -41,6 +41,7 @@ const Main = ({ navigation  }) => {
 			onIndexChange={setIndex}
 			renderScene={renderScene}
 			shifting
+			sceneAnimation={true}
 			/>
 	)
 }
@@ -55,6 +56,7 @@ const App = () => {
 						<Stack.Screen
 							name="Olympus"
 							component={Main}
+							options={{ headerShown: false }}
 							/>
 						<Stack.Screen
 							name="login"

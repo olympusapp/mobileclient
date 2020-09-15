@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, Button, ScrollView, StyleSheet, AppRegistry, TouchableHighlight } from 'react-native'
-import { NativeRouter, Route, Link, useLocation } from "react-router-native";
-import CardView from 'react-native-cardview'
+import { NativeRouter, Route, Link, useLocation, useHistory } from "react-router-native";
+import { Card, Button as MaterialButton, Appbar } from 'react-native-paper';
 
 import { APIExplorer } from '../utils/api'
 
@@ -22,16 +22,17 @@ const styles = StyleSheet.create({
 
 const getPathInfo = (path) => {
 	const splittedPath = path.split('/')
-	const pastFolder = `/${splittedPath[splittedPath.length-2]}`
 	const pastPath = `/${splittedPath.slice(1,splittedPath.length-1).join('/')}`
+	const currentFolder = splittedPath[splittedPath.length-1]
 	return {
-		pastFolder,
-		pastPath
+		pastPath,
+		currentFolder
 	}
 }
 
 const ExplorerPanel = ({ path }) => {
 	
+	const history = useHistory();
 	const [useList, setList] = React.useState([])
 	
 	React.useEffect(() => {
@@ -42,39 +43,51 @@ const ExplorerPanel = ({ path }) => {
 		})
 	},[])
 	
-	const { pastPath, pastFolder } = getPathInfo(useLocation().pathname)
+	const { pastPath, currentFolder } = getPathInfo(useLocation().pathname)
+
 
 	return (
-		<ScrollView>
+		<View>
 			<Route exact path={path} component={() => {
+					
 					return (
 						<View>
-							{path !== '/' && (
-								<TouchableHighlight>
-									<Link to={pastPath} style={styles.button}>
-										<Text> Go back to {pastFolder}</Text>
-									</Link>
-								</TouchableHighlight>
-							)}
+							<Appbar.Header>
+								{path !== '/' ? (
+									<React.Fragment>
+										<Appbar.BackAction color="white" onPress={() => history.push(pastPath)} />
+										<Appbar.Content title={currentFolder}/>
+									</React.Fragment>
+								) : (
+									<Appbar.Content title="Explorer"/>
+								)}
+								
+								<Appbar.Action icon="upload" />
+								<Appbar.Action icon="dots-vertical" />
+							</Appbar.Header>
 							<CardsList path={path} list={useList}/>
 						</View>
 					)
 				}}/>
 			<Route path={`${path}/:path`} component={() => <ExplorerPanel path={useLocation().pathname}/>}/>
-		</ScrollView>
+		</View>
 	)
 }
 
 const CardsList = ({ path, list }) => {
-	return list.map(item => {
-		return (
-			<Link key={item.fileName} to={`${path}/${item.fileName}`}>
-				<CardView  style={styles.card}>
-					<Text>{item.fileName}</Text>
-				</CardView>
-			</Link>
-		)
-	})
+	return (
+		<ScrollView>
+			{list.map(item => {
+				return (
+					<Link key={item.fileName} to={`${path}/${item.fileName}`}>
+						<Card  style={styles.card}>
+							<Text>{item.fileName}</Text>
+						</Card>
+					</Link>
+				)
+			})}
+		</ScrollView>
+	)
 }
 
 export default () => {
