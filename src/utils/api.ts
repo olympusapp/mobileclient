@@ -5,7 +5,7 @@ const getServerUri = () => AppStore.getState().serverURL
 
 export const APILogin = ({ username, password }) => {
 	
-	return new Promise((res) => {
+	return new Promise((res, rej) => {
 		axios.post(`${getServerUri()}/api/login`,{},{
 			headers:{
 				username,
@@ -13,6 +13,8 @@ export const APILogin = ({ username, password }) => {
 			}
 		}).then(({ data }) => {
 			res(data)
+		}).catch(err => {
+			rej(err)
 		})
 	})
 }

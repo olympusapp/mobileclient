@@ -19,9 +19,9 @@ const Stack = createStackNavigator();
 const Main = ({ navigation  }) => {
 	const [index, setIndex] = React.useState(0);
 	const [routes] = React.useState([
-		{ key: 'home', title: 'Home', icon: 'home' },
-		{ key: 'explorer', title: 'Explorer', icon: 'folder' },
-		{ key: 'configuration', title: 'Configuration', icon: 'account-settings' }
+		{ key: 'home', title: 'Home', icon: 'home',  color: '#3F51B5' },
+		{ key: 'explorer', title: 'Explorer', icon: 'folder', color: '#009688' },
+		{ key: 'configuration', title: 'Configuration', icon: 'account-settings', color: '#795548' }
 	]);
 
 	const renderScene = ({ route, jumpTo }) => {

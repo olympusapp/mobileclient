@@ -35,6 +35,8 @@ export default () => {
 				}))
 				setStatus(`Welcome!`)
 			}
+		}).catch(err => {
+			setStatus(`Error: ${err}`)
 		})
 	}
 	

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Button, ScrollView, StyleSheet, AppRegistry, TouchableHighlight } from 'react-native'
+import { View, Text, Button, ScrollView, StyleSheet, AppRegistry, TouchableHighlight, Animated, Dimensions  } from 'react-native'
 import { NativeRouter, Route, Link, useLocation, useHistory } from "react-router-native";
 import { Card, Button as MaterialButton, Appbar } from 'react-native-paper';
 
@@ -32,15 +32,39 @@ const getPathInfo = (path) => {
 
 const ExplorerPanel = ({ path }) => {
 	
+	const windowWidth = Dimensions.get('window').width
+	const HorizontalAnimation = React.useRef(new Animated.Value(0-windowWidth/3)).current
+	const OpacityAnimation = React.useRef(new Animated.Value(-0.5)).current
+	
 	const history = useHistory();
 	const [useList, setList] = React.useState([])
+	
+	const HorizontalTransition = () => {
+		Animated.timing(HorizontalAnimation, {
+			toValue: 0,
+			duration: 150,
+			useNativeDriver: false
+		}).start();
+	}
+	
+	const OpacityTransition = () => {
+		Animated.timing(OpacityAnimation, {
+			toValue: 1,
+			duration: 150,
+			useNativeDriver: false
+		}).start();
+	}
 	
 	React.useEffect(() => {
 		APIExplorer(path).then((res: any) => {
 			setList(res.data.folderPaths)
+			
+			HorizontalTransition()
+			OpacityTransition()
 		}).catch((err) => {
 			console.log(err)
 		})
+		
 	},[])
 	
 	const { pastPath, currentFolder } = getPathInfo(useLocation().pathname)
@@ -65,7 +89,12 @@ const ExplorerPanel = ({ path }) => {
 								<Appbar.Action icon="upload" />
 								<Appbar.Action icon="dots-vertical" />
 							</Appbar.Header>
-							<CardsList path={path} list={useList}/>
+							<Animated.View style={{
+									left: HorizontalAnimation,
+										opacity: OpacityAnimation
+								}}>
+								<CardsList path={path} list={useList}/>
+							</Animated.View>
 						</View>
 					)
 				}}/>
